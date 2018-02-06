@@ -2,12 +2,12 @@ import theano
 import theano.tensor as T
 import numpy as np
 
-w1_initial = np.random.normal(loc=0.0, scale=0.01, size=(2,2)).astype(theano.config.floatX)
+w1_initial = np.random.normal(loc=0.0, scale=0.1, size=(2,2)).astype(theano.config.floatX)
 w1 = theano.shared(w1_initial)
 b1_initial = np.zeros((2,), dtype=theano.config.floatX)
 b1 = theano.shared(b1_initial)
 
-w2_initial = np.random.normal(loc=0.0, scale=0.01, size=(2,1)).astype(theano.config.floatX)
+w2_initial = np.random.normal(loc=0.0, scale=0.1, size=(2,1)).astype(theano.config.floatX)
 w2 = theano.shared(w2_initial)
 b2_initial = np.zeros((), dtype=theano.config.floatX)
 b2 = theano.shared(b2_initial)
@@ -41,10 +41,21 @@ train = theano.function(inputs=[x,y], outputs=[cost, a2], updates=updates)
 inputs = np.array([[0,0],[0,1],[1,0],[1,1]], dtype=theano.config.floatX)
 labels = np.array([[0],[1],[1],[0]], dtype=theano.config.floatX) 
 
+def shufflelists(lists):
+  li = np.random.permutation(len(lists[0]))
+  out = []
+  for l in lists:
+    out.append(l[li])
+  return out 
+
 epoch = 10001 
 for i in range(epoch):
-  for j in range(len(inputs)):
-    loss,pred = train(inputs[j:j+1], labels[j:j+1])
+  inputs_,labels_= shufflelists([inputs,labels])
+  # inputs_,labels_ = inputs,labels
+  loss,pred = train(inputs_, labels_)
+  print(loss)
+  # for j in range(len(inputs_)):
+  #   loss,pred = train(inputs_[j:j+1], labels_[j:j+1])
 
 print("###")
 print(predict(inputs)) 
