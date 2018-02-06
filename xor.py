@@ -62,3 +62,6 @@ print(predict(inputs))
 print("###")
 for i in range(len(args)):
   print(args[i].eval())
+
+
+print()
